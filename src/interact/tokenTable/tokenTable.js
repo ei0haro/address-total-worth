@@ -6,6 +6,7 @@ import GlowingButton from "../button/button";
 import {ethers} from "ethers";
 import {TextInput} from "@primer/react";
 
+
 function TokenTable({tokens}) {
 
     const [isMobile, setIsMobile] = useState(false)
@@ -46,13 +47,6 @@ function TokenTable({tokens}) {
     useEffect(() => {
         window.addEventListener("resize", handleResize)
     })
-
-    function setContractText(contract) {
-        if (isMobile) {
-            return contract.substring(0, 4) + "..." + contract.substring(16, 20);
-        }
-        return contract
-    }
 
     function setDonateButtonText(token) {
         return "Donate " + token.symbol + " to beggar"
@@ -104,8 +98,7 @@ function TokenTable({tokens}) {
                             <th className="font-table">Logo</th>
                             <th className="font-table">Name</th>
                             <th className="font-table">Balance</th>
-                            <th className="font-table">Amount to donate</th>
-                            <th className="font-table">Donate</th>
+                            <th className="font-table">Balance Fiat</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -117,23 +110,7 @@ function TokenTable({tokens}) {
                                            src={item.logo}/></td>
                                 <td className="font-table">{item.name}</td>
                                 <td className="font-table">{`${item.balance} ${item.symbol}`}</td>
-                                <td className="font-table">
-
-                                    <TextInput
-                                        id="amount"
-                                        size="sm"
-                                        className="mobileBox"
-                                        required
-                                        name={index}
-                                        type="number"
-                                        defaultValue={Math.round((item.balance / 10) * 100) / 100}
-                                        onChange={handleInputChange}
-                                    />
-                              </td>
-                                <td className="font-table">
-                                            <GlowingButton onClickFunction={() => transferToken(item, index)} disableIf={false}
-                                                           text={setDonateButtonText(item)}></GlowingButton>
-                                </td>
+                                <td className="font-table">{`${item.balanceFiat['USD']}`}</td>
                             </tr>
                         ))}
                         </tbody>

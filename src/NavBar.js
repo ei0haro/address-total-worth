@@ -3,7 +3,6 @@ import Navbar from 'react-bootstrap/Navbar';
 import GlowingButton from "./interact/button/button";
 import React from "react";
 
-
 function NavBar({walletAddress, handleConnectWallet}) {
 
     function setConnectButtonText(wallet) {
@@ -22,7 +21,7 @@ function NavBar({walletAddress, handleConnectWallet}) {
         <Navbar bg="dark" variant="dark">
             <Container>
                 <Navbar.Brand href="#home">
-                      Bearmarket beggar
+                      Check your address total worth...
                 </Navbar.Brand>
                 <Navbar.Collapse fixed="bottom" className="justify-content-end">
                     <GlowingButton size={'lg'} onClickFunction={handleConnectWallet} disableIf={false} text={setConnectButtonText(walletAddress)}></GlowingButton>
