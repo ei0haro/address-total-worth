@@ -18,6 +18,7 @@ function App() {
     const [tokens, setTokens] = useState({});
     const [ownerAddress, setOwnerAddress] = useState('');
     const [errorMessage, setErrorMessage] = useState("");
+    const [selectedCurrency, setSelectedCurrency] = useState("USD");
 
     const handleFetchNfts = () => {
         setIsLoading(true);
@@ -74,7 +75,7 @@ function App() {
 
     return (
         <div className="App">
-            <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet} isConnected={isConnected}></NavBar>
+            <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet} isConnected={isConnected} selectedCurrency={selectedCurrency} setSelectedCurrency={setSelectedCurrency}></NavBar>
             {tokens.data !== undefined ? <TokenTable tokens={tokens} ownerAddress={ownerAddress}/> : ""}
             {nfts.length > 0 ? <NftTable nfts={nfts} ownerAddress={ownerAddress}/> : ""}
 

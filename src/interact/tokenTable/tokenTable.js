@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 
 import Table from 'react-bootstrap/Table';
 import Image from 'react-bootstrap/Image'
-import DarkButton from "../button/button";
+import "./tokenTable.css";
 import {ethers} from "ethers";
 import {TextInput} from "@primer/react";
 
@@ -36,13 +36,15 @@ function TokenTable({tokens}) {
                             </tr>
                         ))}
 
-                        <tr key={tokens.data.size + 1}>
-                            <td className="font-table"></td>
-                            <td className="font-table"></td>
-                            <td className="font-table"></td>
-                            <td className="font-table">Total: {`${tokens.totalInFiat['USD']}`}</td>
-                        </tr>
                         </tbody>
+                        <tfoot >
+                        <tr key={tokens.data.size + 1} >
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td className="font-table">Total: {`${tokens.totalInFiat['USD'].toFixed(2)}`}</td>
+                        </tr>
+                        </tfoot>
                     </Table>
                 </div>
             </div>
