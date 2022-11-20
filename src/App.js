@@ -15,7 +15,7 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [nfts, setNfts] = useState([]);
-    const [tokens, setTokens] = useState([]);
+    const [tokens, setTokens] = useState({});
     const [ownerAddress, setOwnerAddress] = useState('');
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -75,7 +75,7 @@ function App() {
     return (
         <div className="App">
             <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet} isConnected={isConnected}></NavBar>
-            {tokens.length > 0  ? <TokenTable tokens={tokens} ownerAddress={ownerAddress}/> : ""}
+            {tokens.data !== undefined ? <TokenTable tokens={tokens} ownerAddress={ownerAddress}/> : ""}
             {nfts.length > 0 ? <NftTable nfts={nfts} ownerAddress={ownerAddress}/> : ""}
 
             {isConnected ? <div className="table-responsive">

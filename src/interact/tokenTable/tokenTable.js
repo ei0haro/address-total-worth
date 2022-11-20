@@ -9,7 +9,7 @@ import {TextInput} from "@primer/react";
 
 function TokenTable({tokens}) {
 
-    if (tokens.length > 0) {
+    if (tokens.data.length > 0) {
         return (
 
             <div>
@@ -25,7 +25,7 @@ function TokenTable({tokens}) {
                         </thead>
                         <tbody>
 
-                        {tokens.map((item, index) => (
+                        {tokens.data.map((item, index) => (
 
                             <tr key={index}>
                                 <td><Image width={50} height={50} className='img-fluid shadow-4' alt='...'
@@ -35,6 +35,13 @@ function TokenTable({tokens}) {
                                 <td className="font-table">{`${item.balanceFiat['USD']}`}</td>
                             </tr>
                         ))}
+
+                        <tr key={tokens.data.size + 1}>
+                            <td className="font-table"></td>
+                            <td className="font-table"></td>
+                            <td className="font-table"></td>
+                            <td className="font-table">Total: {`${tokens.totalInFiat['USD']}`}</td>
+                        </tr>
                         </tbody>
                     </Table>
                 </div>

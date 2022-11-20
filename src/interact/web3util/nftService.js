@@ -62,8 +62,6 @@ export const fetchTokens = async (ownerAddr) => {
 
     let contractAddresses = tokensWithBalance.map(a => a.contractAddress);
 
-    //console.log(contractAddresses)
-
     let tokenPrices = await CoinGeckoClient.simple.fetchTokenPrice({
         contract_addresses: contractAddresses,
         vs_currencies: fiatCurrencies,
@@ -71,13 +69,6 @@ export const fetchTokens = async (ownerAddr) => {
 
 
     for (const token of tokensWithBalance) {
-
-        // console.log("USD: " + tokenPrices.data[token.contractAddress]['usd'])
-
-
-        /*let tokenPrice = tokenPrices.filter(obj => {
-          return obj[token.contractAddress] === 6
-        })*/
 
         const metadata = await alchemy.core.getTokenMetadata(token.contractAddress)
         const tokenBalance = parseFloat((token.tokenBalance / Math.pow(10, metadata.decimals)).toFixed(5))
@@ -99,14 +90,11 @@ export const fetchTokens = async (ownerAddr) => {
         result.data.push(tokenData);
     }
 
-    console.log(result)
-
-
     let totalInFiat = {}
     fiatCurrencies.forEach(function (c) {
-        let total = 0;
+        let total = 0.0;
         result.data.forEach(function (token) {
-           total += token.balanceFiat[c]
+           total += parseFloat(token.balanceFiat[c])
         });
 
         totalInFiat[c] = total
@@ -114,7 +102,7 @@ export const fetchTokens = async (ownerAddr) => {
     result.totalInFiat = totalInFiat
 
     console.log(result)
-    return result.data
+    return result
 };
 
 export const fetchAbi = async (contractAddress) => {
