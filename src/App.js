@@ -6,7 +6,7 @@ import {connectWallet} from "./interact/wallet/wallet";
 import NftTable from "./interact/nftTable/nftTable";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from "./NavBar";
-import GlowingButton from "./interact/button/button";
+import DarkButton from "./interact/button/button";
 import Table from "react-bootstrap/Table";
 import Image from "react-bootstrap/Image";
 import TokenTable from "./interact/tokenTable/tokenTable";
@@ -74,11 +74,11 @@ function App() {
 
     return (
         <div className="App">
-            <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet}></NavBar>
+            <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet} isConnected={isConnected}></NavBar>
             {tokens.length > 0  ? <TokenTable tokens={tokens} ownerAddress={ownerAddress}/> : ""}
             {nfts.length > 0 ? <NftTable nfts={nfts} ownerAddress={ownerAddress}/> : ""}
 
-            <div className="table-responsive">
+            {isConnected ? <div className="table-responsive">
                 <Table responsive borderless hover variant="dark" id="fetch-buttons" size="sm">
                     <thead>
                     <tr>
@@ -87,14 +87,20 @@ function App() {
                     </tr>
                     </thead>
                     <tbody>
-                        <tr key="1">
-                            <td className="font-table"><GlowingButton size={'lg'} onClickFunction={handleFetchNfts} disableIf={isLoading || !isConnected} text={isLoading ? 'Loading…' : 'Fetch NFTs'}></GlowingButton></td>
-                            <td className="font-table"><GlowingButton size={'lg'} onClickFunction={handleFetchTokens} disableIf={isLoading || !isConnected} text={isLoading ? 'Loading…' : 'Fetch Tokens'}></GlowingButton></td>
-                        </tr>
+                    <tr key="1">
+                        <td className="font-table"><DarkButton size={'sm'} onClickFunction={handleFetchNfts}
+                                                               disableIf={isLoading || !isConnected}
+                                                               text={isLoading ? 'Loading…' : 'Fetch NFTs'}></DarkButton>
+                        </td>
+                        <td className="font-table"><DarkButton size={'sm'} onClickFunction={handleFetchTokens}
+                                                               disableIf={isLoading || !isConnected}
+                                                               text={isLoading ? 'Loading…' : 'Fetch Tokens'}></DarkButton>
+                        </td>
+                    </tr>
                     </tbody>
                 </Table>
             </div>
-
+            : ""}
         </div>
 
     );

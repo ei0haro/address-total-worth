@@ -69,6 +69,7 @@ export const fetchTokens = async (ownerAddr) => {
         vs_currencies: fiatCurrencies,
     });
 
+
     for (const token of tokensWithBalance) {
 
         // console.log("USD: " + tokenPrices.data[token.contractAddress]['usd'])
@@ -97,6 +98,20 @@ export const fetchTokens = async (ownerAddr) => {
         }
         result.data.push(tokenData);
     }
+
+    console.log(result)
+
+
+    let totalInFiat = {}
+    fiatCurrencies.forEach(function (c) {
+        let total = 0;
+        result.data.forEach(function (token) {
+           total += token.balanceFiat[c]
+        });
+
+        totalInFiat[c] = total
+    });
+    result.totalInFiat = totalInFiat
 
     console.log(result)
     return result.data

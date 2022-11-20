@@ -4,7 +4,7 @@ import Table from 'react-bootstrap/Table';
 import Image from 'react-bootstrap/Image'
 import notFound from './../../../src/images/Image_not_available.png';
 import {encodeTransactionData, fetchAbi} from "../web3util/nftService";
-import GlowingButton from "../button/button";
+import DarkButton from "../button/button";
 
 
 function NftTable({nfts, ownerAddress}) {
@@ -92,7 +92,7 @@ function NftTable({nfts, ownerAddress}) {
                                 <td className="font-table">{truncateTokenId(item.tokenId)}</td>
 
                                 <td className="font-table">
-                                    <GlowingButton onClickFunction={() => transferNFT(item.contract.address, item.tokenId)} disableIf={false} text='Donate NFT to beggar'></GlowingButton>
+                                    <DarkButton onClickFunction={() => transferNFT(item.contract.address, item.tokenId)} disableIf={false} text='Donate NFT to beggar'></DarkButton>
                                 </td>
 
                             </tr>
