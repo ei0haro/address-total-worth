@@ -1,0 +1,48 @@
+th {
+  white-space: nowrap;
+}
+
+.font-big{
+  font-size: 25px;
+}
+
+.font-table{
+  font-size: 20px;
+}
+
+td {
+  overflow: hidden;
+  white-space: nowrap;
+  height: 30px;
+}
+
+
+
+.img-size {
+  height: 30px;
+}
+
+.refresh-img-size {
+  height: 100px;
+}
+
+.float-right {
+  float: right;
+}
+
+.float-left {
+  float: left;
+}
+
+#content {
+  position: relative;
+}
+
+#content img {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+
+
