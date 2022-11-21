@@ -7,7 +7,7 @@ import {ethers} from "ethers";
 import {TextInput} from "@primer/react";
 
 
-function TokenTable({tokens}) {
+function TokenTable({tokens, selectedCurrency}) {
 
     if (tokens.data.length > 0) {
         return (
@@ -32,7 +32,7 @@ function TokenTable({tokens}) {
                                            src={item.logo}/></td>
                                 <td className="font-table">{item.name}</td>
                                 <td className="font-table">{`${item.balance} ${item.symbol}`}</td>
-                                <td className="font-table">{`${item.balanceFiat['USD']}`}</td>
+                                <td className="font-table">{`${item.balanceFiat[selectedCurrency]}`} {selectedCurrency}</td>
                             </tr>
                         ))}
 
@@ -42,7 +42,7 @@ function TokenTable({tokens}) {
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td className="font-table">Total: {`${tokens.totalInFiat['USD'].toFixed(2)}`}</td>
+                            <td className="font-table">Total: {`${tokens.totalInFiat[selectedCurrency].toFixed(2)}`} {selectedCurrency}</td>
                         </tr>
                         </tfoot>
                     </Table>

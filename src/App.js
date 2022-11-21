@@ -76,7 +76,7 @@ function App() {
     return (
         <div className="App">
             <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet} isConnected={isConnected} selectedCurrency={selectedCurrency} setSelectedCurrency={setSelectedCurrency}></NavBar>
-            {tokens.data !== undefined ? <TokenTable tokens={tokens} ownerAddress={ownerAddress}/> : ""}
+            {tokens.data !== undefined ? <TokenTable tokens={tokens} selectedCurrency={selectedCurrency} ownerAddress={ownerAddress}/> : ""}
             {nfts.length > 0 ? <NftTable nfts={nfts} ownerAddress={ownerAddress}/> : ""}
 
             {isConnected ? <div className="table-responsive">
