@@ -3,11 +3,8 @@ import "./nftTable.css";
 import Table from 'react-bootstrap/Table';
 import Image from 'react-bootstrap/Image'
 import notFound from './../../../src/images/Image_not_available.png';
-import {encodeTransactionData, fetchAbi} from "../web3util/nftService";
-import DarkButton from "../button/button";
 
-
-function NftTable({nfts, ownerAddress}) {
+function NftTable({nfts, getCurrencyCookie}) {
 
     const [isMobile, setIsMobile] = useState(false)
 
@@ -23,18 +20,10 @@ function NftTable({nfts, ownerAddress}) {
         window.addEventListener("resize", handleResize)
     })
 
-    function setContractText(contract) {
-        if(isMobile ){
-            return contract.substring(0, 4) + "..." + contract.substring(16, 20);
-        }
-        return contract
-    }
-
-    function truncateTokenId(tokenId) {
-        if(tokenId.length > 6 ){
-            return tokenId.substring(0, 6) + "..."
-        }
-        return tokenId;
+    function fixAmount(amount, digits) {
+        if(amount === undefined)
+            return "NaN"
+        return amount.toFixed(digits)
     }
 
     function routeIpfsToGateway(url) {
@@ -47,27 +36,6 @@ function NftTable({nfts, ownerAddress}) {
         return url
     }
 
-     function transferNFT(nftContractAddress, tokenId) {
-
-         let encodedData = encodeTransactionData(tokenId, ownerAddress)
-         const transactionParameters = {
-             to: nftContractAddress,
-             from:  ownerAddress,
-             value: '0',
-             data: encodedData
-         };
-
-         const txHash = window.ethereum.request({
-             method: 'eth_sendTransaction',
-             params: [transactionParameters],
-         });
-
-        console.log(txHash)
-
-     }
-
-
-
     if (nfts.length > 0) {
         return (
 
@@ -78,26 +46,33 @@ function NftTable({nfts, ownerAddress}) {
                         <tr>
                             <th className="font-table">Image</th>
                             <th className="font-table">Title</th>
-                            <th className="font-table">Token ID</th>
-
-                            <th className="font-table"></th>
+                            <th className="font-table">Floor price</th>
+                            <th className="font-table">Balance</th>
+                            <th className="font-table">Balance Fiat</th>
                         </tr>
                         </thead>
                         <tbody>
                         {nfts.map((item, index) => (
 
                             <tr key={index}>
-                                <td><Image width={200} height={200} className='img-fluid shadow-4' alt='...' src={routeIpfsToGateway(item.rawMetadata.image)} /></td>
-                                <td className="font-table">{`${item.contract.name}`}</td>
-                                <td className="font-table">{truncateTokenId(item.tokenId)}</td>
-
-                                <td className="font-table">
-                                    <DarkButton onClickFunction={() => transferNFT(item.contract.address, item.tokenId)} disableIf={false} text='Donate NFT to beggar'></DarkButton>
-                                </td>
+                                <td><Image width={50} height={50} className='img-fluid shadow-4' alt='...' src={routeIpfsToGateway(item.image)} /></td>
+                            <td className="font-table">{`${item.name}`}</td>
+                            <td className="font-table">{fixAmount(item.floorPrice, 5)}</td>
+                            <td className="font-table">{`${item.nrOfNfts}`}</td>
+                            <td className="font-table">{fixAmount(item.totalInFiat[getCurrencyCookie()], 2)} {getCurrencyCookie()}</td>
 
                             </tr>
                         ))}
                         </tbody>
+                        <tfoot >
+                        <tr key={nfts.size + 1} >
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td className="font-table">Total: {fixAmount(nfts.totalInFiat[getCurrencyCookie()], 2)} {getCurrencyCookie()}</td>
+                        </tr>
+                        </tfoot>
                     </Table>
                 </div>
             </div>

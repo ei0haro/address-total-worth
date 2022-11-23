@@ -1,10 +1,7 @@
 import {TokenBalanceType} from "alchemy-sdk";
 import {fiatCurrencies} from "../FiatCurrencies";
-
-const etherscan = require('etherscan-api').init(process.env.REACT_APP_ETHERSCAN_API_KEY);
 const {Network, Alchemy} = require('alchemy-sdk');
 const {ethers} = require("ethers");
-const erc729Abi = require('./../../abi/defaultERC729Abi.json');
 const ethereumLogo = require('./../../images/ethereum.png');
 const CoinGecko = require('coingecko-api');
 
@@ -16,8 +13,68 @@ const settings = {
 export const fetchNFTs = async (ownerAddr) => {
     const alchemy = new Alchemy(settings);
     const nftsForOwner = await alchemy.nft.getNftsForOwner(ownerAddr);
-    return nftsForOwner.ownedNfts;
+    const distinctNfts = [];
+    const map = new Map();
+    for (const nft of nftsForOwner.ownedNfts) {
+        if(!map.has(nft.contract.address)){
+            map.set(nft.contract.address, true);
+            distinctNfts.push({
+                contractAddress: nft.contract.address,
+                name: nft.contract.name,
+                image: nft.rawMetadata.image,
+                nrOfNfts: 1
+            })
+        }
+        else{
+            distinctNfts.forEach(function(distinctNft) {
+                if (distinctNft.contractAddress === nft.contract.address) {
+                    distinctNft.nrOfNfts = distinctNft.nrOfNfts + 1;
+                }
+            })
+        }
+    }
+
+    let CoinGeckoClient = new CoinGecko()
+
+    let ethPrice = await CoinGeckoClient.simple.price({
+        ids: ['ethereum'],
+        vs_currencies: fiatCurrencies,
+    });
+
+    for (const nft of distinctNfts){
+
+        let floorPrice = await alchemy.nft.getFloorPrice(nft.contractAddress)
+
+        nft.floorPrice = floorPrice.openSea.floorPrice
+        nft.totalInFiat = await fetchNftFiatBalance(ethPrice, floorPrice.openSea.floorPrice, nft.nrOfNfts)
+    }
+
+    let totalInFiat = {}
+    fiatCurrencies.forEach(function (c) {
+        let total = 0.0;
+        distinctNfts.forEach(function (nft) {
+            if(nft.totalInFiat[c] !== undefined)
+                total += nft.totalInFiat[c]
+        });
+
+        totalInFiat[c] = total
+    });
+    distinctNfts.totalInFiat = totalInFiat
+
+    return distinctNfts
+
 };
+
+async function fetchNftFiatBalance(ethPrice, floorPriceInEth, numberOfNfts) {
+
+    let fiatCurrencyBalance = {};
+    fiatCurrencies.forEach(function (c) {
+        if(floorPriceInEth !== undefined)
+            fiatCurrencyBalance[c] = (ethPrice.data['ethereum'][c.toLowerCase()] * floorPriceInEth) * numberOfNfts
+    });
+
+    return fiatCurrencyBalance
+}
 
 async function fetchEthereumBalance(CoinGeckoClient, alchemy, ownerAddr) {
     let ethPrice = await CoinGeckoClient.simple.price({
@@ -67,7 +124,6 @@ export const fetchTokens = async (ownerAddr) => {
         vs_currencies: fiatCurrencies,
     });
 
-
     for (const token of tokensWithBalance) {
 
         const metadata = await alchemy.core.getTokenMetadata(token.contractAddress)
@@ -101,22 +157,7 @@ export const fetchTokens = async (ownerAddr) => {
     });
     result.totalInFiat = totalInFiat
 
-    console.log(result)
     return result
 };
-
-export const fetchAbi = async (contractAddress) => {
-    let abi = await etherscan.contract.getabi(contractAddress)
-    return abi.result
-}
-
-export const encodeTransactionData = (tokenId, ownerAddress) => {
-
-    let iface = new ethers.utils.Interface(erc729Abi)
-    return iface.encodeFunctionData("safeTransferFrom", [
-        ethers.utils.getAddress(ownerAddress), ethers.utils.getAddress(process.env.REACT_APP_BEGGAR_ADDRESS), tokenId
-    ])
-
-}
 
 
