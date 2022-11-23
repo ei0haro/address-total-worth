@@ -3,11 +3,9 @@ import React, {useEffect, useState} from "react";
 import Table from 'react-bootstrap/Table';
 import Image from 'react-bootstrap/Image'
 import "./tokenTable.css";
-import {ethers} from "ethers";
-import {TextInput} from "@primer/react";
 
+function TokenTable({tokens, getCurrencyCookie}) {
 
-function TokenTable({tokens, selectedCurrency}) {
 
     if (tokens.data.length > 0) {
         return (
@@ -32,7 +30,7 @@ function TokenTable({tokens, selectedCurrency}) {
                                            src={item.logo}/></td>
                                 <td className="font-table">{item.name}</td>
                                 <td className="font-table">{`${item.balance} ${item.symbol}`}</td>
-                                <td className="font-table">{`${item.balanceFiat[selectedCurrency]}`} {selectedCurrency}</td>
+                                <td className="font-table">{`${item.balanceFiat[getCurrencyCookie()]}`} {getCurrencyCookie()}</td>
                             </tr>
                         ))}
 
@@ -42,7 +40,7 @@ function TokenTable({tokens, selectedCurrency}) {
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td className="font-table">Total: {`${tokens.totalInFiat[selectedCurrency].toFixed(2)}`} {selectedCurrency}</td>
+                            <td className="font-table">Total: {`${tokens.totalInFiat[getCurrencyCookie()].toFixed(2)}`} {getCurrencyCookie()}</td>
                         </tr>
                         </tfoot>
                     </Table>

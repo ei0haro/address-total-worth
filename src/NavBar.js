@@ -6,8 +6,7 @@ import {Nav, NavDropdown} from "react-bootstrap";
 import "./interact/button/button.css";
 import {fiatCurrencies} from "./interact/FiatCurrencies";
 
-function NavBar({walletAddress, handleConnectWallet, isConnected, selectedCurrency, setSelectedCurrency}) {
-
+function NavBar({walletAddress, handleConnectWallet, isConnected, setCurrencyCookie, getCurrencyCookie}) {
 
     function setConnectButtonText(wallet) {
         if (wallet.startsWith("0x")) {
@@ -17,12 +16,6 @@ function NavBar({walletAddress, handleConnectWallet, isConnected, selectedCurren
         } else {
             return wallet
         }
-    }
-
-    function handleCurrency(curr) {
-        console.log(curr)
-        setSelectedCurrency(curr);
-       // console.log(selectedCurrency)
     }
 
     return (
@@ -36,11 +29,11 @@ function NavBar({walletAddress, handleConnectWallet, isConnected, selectedCurren
                 {isConnected ? <Nav>
                         <NavDropdown
                             id="nav-dropdown-dark-example"
-                            title={selectedCurrency}
+                            title={getCurrencyCookie()}
                             menuVariant="dark"
                         >
                             {fiatCurrencies.map((item, index) => (
-                                <NavDropdown.Item key={index} onClick={() => handleCurrency(item)}>{item}</NavDropdown.Item>
+                                <NavDropdown.Item key={index} onClick={() => setCurrencyCookie(item)}>{item}</NavDropdown.Item>
                             ))}
 
                         </NavDropdown>
@@ -55,11 +48,6 @@ function NavBar({walletAddress, handleConnectWallet, isConnected, selectedCurren
         </Navbar>
         <Navbar bg="dark" variant="dark">
             <Container>
-
-
-
-
-
 
             </Container>
         </Navbar>

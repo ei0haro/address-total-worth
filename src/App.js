@@ -8,8 +8,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from "./NavBar";
 import DarkButton from "./interact/button/button";
 import Table from "react-bootstrap/Table";
-import Image from "react-bootstrap/Image";
 import TokenTable from "./interact/tokenTable/tokenTable";
+import Cookies from 'universal-cookie';
 
 function App() {
     const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +18,7 @@ function App() {
     const [tokens, setTokens] = useState({});
     const [ownerAddress, setOwnerAddress] = useState('');
     const [errorMessage, setErrorMessage] = useState("");
-    const [selectedCurrency, setSelectedCurrency] = useState("USD");
+    const [selectedCurrency, setSelectedCurrency] = useState();
 
     const handleFetchNfts = () => {
         setIsLoading(true);
@@ -44,6 +44,17 @@ function App() {
                 setErrorMessage("Unable to fetch token list");
                 setIsLoading(false);
             });
+    };
+
+    const setCurrencyCookie = (curr) => {
+        const cookies = new Cookies();
+        setSelectedCurrency(curr);
+        cookies.set('selectedCurrency', curr, { path: '/' });
+    };
+
+    const getCurrencyCookie = () => {
+        const cookies = new Cookies();
+        return cookies.get('selectedCurrency') !== undefined ? cookies.get('selectedCurrency') : 'USD'
     };
 
 
@@ -75,8 +86,8 @@ function App() {
 
     return (
         <div className="App">
-            <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet} isConnected={isConnected} selectedCurrency={selectedCurrency} setSelectedCurrency={setSelectedCurrency}></NavBar>
-            {tokens.data !== undefined ? <TokenTable tokens={tokens} selectedCurrency={selectedCurrency} ownerAddress={ownerAddress}/> : ""}
+            <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet} isConnected={isConnected} setCurrencyCookie={setCurrencyCookie} getCurrencyCookie={getCurrencyCookie}></NavBar>
+            {tokens.data !== undefined ? <TokenTable tokens={tokens} getCurrencyCookie={getCurrencyCookie} ownerAddress={ownerAddress}/> : ""}
             {nfts.length > 0 ? <NftTable nfts={nfts} ownerAddress={ownerAddress}/> : ""}
 
             {isConnected ? <div className="table-responsive">
