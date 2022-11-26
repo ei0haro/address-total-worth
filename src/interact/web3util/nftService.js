@@ -84,7 +84,7 @@ async function fetchEthereumBalance(CoinGeckoClient, alchemy, ownerAddr) {
 
     let ethBalanceInWei = await alchemy.core.getBalance(ownerAddr)
 
-    let result = {data: []}
+    let result = []
     let ethBalanceInEth = parseFloat((ethers.utils.formatEther(ethBalanceInWei))).toFixed(5)
 
     let fiatCurrencyBalance = {};
@@ -99,9 +99,12 @@ async function fetchEthereumBalance(CoinGeckoClient, alchemy, ownerAddr) {
         logo: ethereumLogo,
         symbol: "ETH",
         decimals: 18,
-        balanceFiat: fiatCurrencyBalance
+        balanceFiat: fiatCurrencyBalance,
+        tokenPrice: ethPrice.data['ethereum']
     }
-    result.data.push(ethData);
+
+    result.push(ethData);
+    console.log(result)
     return result;
 }
 
@@ -112,10 +115,14 @@ export const fetchTokens = async (ownerAddr) => {
 
     let result = await fetchEthereumBalance(CoinGeckoClient, alchemy, ownerAddr);
 
+
+
     let tokensInAddress = await alchemy.core.getTokenBalances(ownerAddr, {type: TokenBalanceType.DEFAULT_TOKENS});
     let tokensWithBalance = tokensInAddress.tokenBalances.filter(function (token) {
         return token.tokenBalance !== "0x0000000000000000000000000000000000000000000000000000000000000000";
     });
+
+
 
     let contractAddresses = tokensWithBalance.map(a => a.contractAddress);
 
@@ -141,15 +148,16 @@ export const fetchTokens = async (ownerAddr) => {
             logo: metadata.logo,
             symbol: metadata.symbol,
             decimals: metadata.decimals,
-            balanceFiat: fiatCurrencyBalance
+            balanceFiat: fiatCurrencyBalance,
+            tokenPrice: tokenPrices.data[token.contractAddress]
         }
-        result.data.push(tokenData);
+        result.push(tokenData);
     }
 
     let totalInFiat = {}
     fiatCurrencies.forEach(function (c) {
         let total = 0.0;
-        result.data.forEach(function (token) {
+        result.forEach(function (token) {
            total += parseFloat(token.balanceFiat[c])
         });
 

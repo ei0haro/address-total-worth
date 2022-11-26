@@ -3,19 +3,18 @@ import './App.css';
 import React, {useEffect, useState} from "react";
 import {fetchNFTs, fetchTokens} from "./interact/web3util/nftService";
 import {connectWallet} from "./interact/wallet/wallet";
-import NftTable from "./interact/nftTable/nftTable";
+import TotalTable from "./interact/nftTable/totalTable";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from "./NavBar";
 import DarkButton from "./interact/button/button";
 import Table from "react-bootstrap/Table";
-import TokenTable from "./interact/tokenTable/tokenTable";
 import Cookies from 'universal-cookie';
 
 function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [nfts, setNfts] = useState([]);
-    const [tokens, setTokens] = useState({});
+    const [tokens, setTokens] = useState([]);
     const [ownerAddress, setOwnerAddress] = useState('');
     const [errorMessage, setErrorMessage] = useState("");
     const [selectedCurrency, setSelectedCurrency] = useState();
@@ -112,8 +111,7 @@ function App() {
             </div>
             : ""}
 
-            {tokens.data !== undefined ? <TokenTable tokens={tokens} getCurrencyCookie={getCurrencyCookie} ownerAddress={ownerAddress}/> : ""}
-            {nfts.length > 0 ? <NftTable nfts={nfts} getCurrencyCookie={getCurrencyCookie}/> : ""}
+            {(nfts.length > 0 || tokens.length > 0) ? <TotalTable nfts={nfts} tokens={tokens} getCurrencyCookie={getCurrencyCookie}/> : ""}
 
         </div>
 
