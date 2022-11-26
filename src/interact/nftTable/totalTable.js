@@ -3,13 +3,21 @@ import "./nftTable.css";
 import Table from 'react-bootstrap/Table';
 import Image from 'react-bootstrap/Image'
 import notFound from './../../../src/images/Image_not_available.png';
+import CloseButton from 'react-bootstrap/CloseButton';
 
-function TotalTable({nfts, tokens, getCurrencyCookie}) {
+function TotalTable({nfts, tokens, getCurrencyCookie, handleCloseTokenButton, handleCloseNftsButton}) {
 
     function fixAmount(amount, digits) {
         if(amount === undefined)
             return "NaN"
         return amount.toFixed(digits)
+    }
+
+    function getClearButton(index, closeButtonHandle) {
+        console.log(index)
+        if(index === 0){
+            return <CloseButton onClick={closeButtonHandle} />
+        }
     }
 
     function getTotal(nftTotalInFiat, tokensTotalInFiat) {
@@ -40,6 +48,7 @@ function TotalTable({nfts, tokens, getCurrencyCookie}) {
             <div>
                 <div className="table-responsive">
                     <Table responsive borderless hover variant="dark" id="crypto-table" size="sm">
+                        <td></td>
                         <thead>
                         <tr>
                             <th className="font-table">Image</th>
@@ -47,6 +56,7 @@ function TotalTable({nfts, tokens, getCurrencyCookie}) {
                             <th className="font-table">Price</th>
                             <th className="font-table">Balance</th>
                             <th className="font-table">Balance Fiat</th>
+                            <th className="font-table"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -58,6 +68,7 @@ function TotalTable({nfts, tokens, getCurrencyCookie}) {
                                 <td className="font-table">{`${item.tokenPrice[getCurrencyCookie().toLowerCase()]}`} {getCurrencyCookie()}</td>
                                 <td className="font-table">{`${item.balance} ${item.symbol}`}</td>
                                 <td className="font-table">{`${item.balanceFiat[getCurrencyCookie()]}`} {getCurrencyCookie()}</td>
+                                <td className="font-table">{getClearButton(index, handleCloseTokenButton)}</td>
                             </tr>
                         )) : ""}
                         <td></td>
@@ -69,6 +80,7 @@ function TotalTable({nfts, tokens, getCurrencyCookie}) {
                                 <td className="font-table">{fixAmount(item.floorPrice, 5)} ETH</td>
                                 <td className="font-table">{`${item.nrOfNfts}`}</td>
                                 <td className="font-table">{fixAmount(item.totalInFiat[getCurrencyCookie()], 2)} {getCurrencyCookie()}</td>
+                                <td className="font-table">{getClearButton(index, handleCloseNftsButton)}</td>
                             </tr>
                         )) : ""}
                         </tbody>
@@ -80,6 +92,7 @@ function TotalTable({nfts, tokens, getCurrencyCookie}) {
                             <td></td>
                             <td></td>
                             <td className="font-table">Total: {getTotal(nfts.totalInFiat, tokens.totalInFiat)} {getCurrencyCookie()}</td>
+                            <td></td>
                         </tr>
                         </tfoot>
                     </Table>

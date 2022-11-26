@@ -56,6 +56,13 @@ function App() {
         return cookies.get('selectedCurrency') !== undefined ? cookies.get('selectedCurrency') : 'USD'
     };
 
+    const handleCloseTokenButton = () => {
+        setTokens([])
+    };
+
+    const handleCloseNftsButton = () => {
+        setNfts([])
+    };
 
     const handleConnectWallet = () => {
         connectWallet()
@@ -111,7 +118,7 @@ function App() {
             </div>
             : ""}
 
-            {(nfts.length > 0 || tokens.length > 0) ? <TotalTable nfts={nfts} tokens={tokens} getCurrencyCookie={getCurrencyCookie}/> : ""}
+            {(nfts.length > 0 || tokens.length > 0) ? <TotalTable nfts={nfts} tokens={tokens} getCurrencyCookie={getCurrencyCookie} handleCloseTokenButton={handleCloseTokenButton} handleCloseNftsButton={handleCloseNftsButton} hand/> : ""}
 
         </div>
 
