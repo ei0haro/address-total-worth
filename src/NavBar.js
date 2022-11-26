@@ -20,37 +20,38 @@ function NavBar({walletAddress, handleConnectWallet, isConnected, setCurrencyCoo
 
     return (
         <div>
-        <Navbar bg="dark" variant="dark">
-            <Container>
+            <Navbar bg="dark" variant="dark">
+                <Container>
 
-            <Navbar.Brand href="#home">
-                Check your address total worth...
-            </Navbar.Brand>
-                {isConnected ? <Nav>
-                        <NavDropdown
-                            id="nav-dropdown-dark-example"
-                            title={getCurrencyCookie()}
-                            menuVariant="dark"
-                        >
-                            {fiatCurrencies.map((item, index) => (
-                                <NavDropdown.Item key={index} onClick={() => setCurrencyCookie(item)}>{item}</NavDropdown.Item>
-                            ))}
+                    <Navbar.Brand href="#home">
+                        Check your address total worth...
+                    </Navbar.Brand>
+                    {isConnected ? <Nav>
+                            <NavDropdown
+                                id="nav-dropdown-dark-example"
+                                title={getCurrencyCookie()}
+                                menuVariant="dark"
+                            >
+                                {fiatCurrencies.map((item, index) => (
+                                    <NavDropdown.Item key={index}
+                                                      onClick={() => setCurrencyCookie(item)}>{item}</NavDropdown.Item>
+                                ))}
 
-                        </NavDropdown>
-                    </Nav>
-                    : ""
-                }
-                <DarkButton size={'sm'} onClickFunction={handleConnectWallet} disableIf={false}
-                            text={setConnectButtonText(walletAddress)}></DarkButton>
+                            </NavDropdown>
+                        </Nav>
+                        : ""
+                    }
+                    <DarkButton size={'sm'} onClickFunction={handleConnectWallet} disableIf={false}
+                                text={setConnectButtonText(walletAddress)}></DarkButton>
 
 
-            </Container>
-        </Navbar>
-        <Navbar bg="dark" variant="dark">
-            <Container>
+                </Container>
+            </Navbar>
+            <Navbar bg="dark" variant="dark">
+                <Container>
 
-            </Container>
-        </Navbar>
+                </Container>
+            </Navbar>
         </div>
     );
 }

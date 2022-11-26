@@ -7,8 +7,9 @@ import TotalTable from "./interact/nftTable/totalTable";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from "./NavBar";
 import DarkButton from "./interact/button/button";
-import Table from "react-bootstrap/Table";
 import Cookies from 'universal-cookie';
+import Navbar from "react-bootstrap/Navbar";
+import Container from "react-bootstrap/Container";
 
 function App() {
     const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +49,7 @@ function App() {
     const setCurrencyCookie = (curr) => {
         const cookies = new Cookies();
         setSelectedCurrency(curr);
-        cookies.set('selectedCurrency', curr, { path: '/' });
+        cookies.set('selectedCurrency', curr, {path: '/'});
     };
 
     const getCurrencyCookie = () => {
@@ -92,36 +93,27 @@ function App() {
 
     return (
         <div className="App">
-            <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet} isConnected={isConnected} setCurrencyCookie={setCurrencyCookie} getCurrencyCookie={getCurrencyCookie}></NavBar>
+            <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet} isConnected={isConnected}
+                    setCurrencyCookie={setCurrencyCookie} getCurrencyCookie={getCurrencyCookie}></NavBar>
 
-            {isConnected ? <div className="table-responsive">
-                <Table responsive borderless hover variant="dark" id="fetch-buttons" size="sm">
-                    <thead>
-                    <tr>
-                        <th className="font-table"></th>
-                        <th className="font-table"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr key="1">
-                        <td className="font-table"><DarkButton size={'sm'} onClickFunction={handleFetchNfts}
-                                                               disableIf={isLoading || !isConnected}
-                                                               text={isLoading ? 'Loading…' : 'Fetch NFTs'}></DarkButton>
-                        </td>
-                        <td className="font-table"><DarkButton size={'sm'} onClickFunction={handleFetchTokens}
-                                                               disableIf={isLoading || !isConnected}
-                                                               text={isLoading ? 'Loading…' : 'Fetch Tokens'}></DarkButton>
-                        </td>
-                    </tr>
-                    </tbody>
-                </Table>
-            </div>
-            : ""}
+            {isConnected ? <Navbar bg="dark" variant="dark">
+                    <Container>
 
-            {(nfts.length > 0 || tokens.length > 0) ? <TotalTable nfts={nfts} tokens={tokens} getCurrencyCookie={getCurrencyCookie} handleCloseTokenButton={handleCloseTokenButton} handleCloseNftsButton={handleCloseNftsButton} hand/> : ""}
+                        <DarkButton size={'sm'} onClickFunction={handleFetchNfts} disableIf={isLoading || !isConnected}
+                                    text={isLoading ? 'Loading…' : 'Fetch NFTs'}></DarkButton>
+                        <DarkButton size={'sm'} onClickFunction={handleFetchTokens} disableIf={isLoading || !isConnected}
+                                    text={isLoading ? 'Loading…' : 'Fetch Tokens'}></DarkButton>
+
+                    </Container>
+                </Navbar>
+                : ""}
+
+            {(nfts.length > 0 || tokens.length > 0) ?
+                <TotalTable nfts={nfts} tokens={tokens} getCurrencyCookie={getCurrencyCookie}
+                            handleCloseTokenButton={handleCloseTokenButton}
+                            handleCloseNftsButton={handleCloseNftsButton} hand/> : ""}
 
         </div>
-
 
 
     );

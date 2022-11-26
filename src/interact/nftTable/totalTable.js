@@ -14,7 +14,6 @@ function TotalTable({nfts, tokens, getCurrencyCookie, handleCloseTokenButton, ha
     }
 
     function getClearButton(index, closeButtonHandle) {
-        console.log(index)
         if(index === 0){
             return <CloseButton onClick={closeButtonHandle} />
         }
