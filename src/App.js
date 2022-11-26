@@ -87,8 +87,6 @@ function App() {
     return (
         <div className="App">
             <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet} isConnected={isConnected} setCurrencyCookie={setCurrencyCookie} getCurrencyCookie={getCurrencyCookie}></NavBar>
-            {tokens.data !== undefined ? <TokenTable tokens={tokens} getCurrencyCookie={getCurrencyCookie} ownerAddress={ownerAddress}/> : ""}
-            {nfts.length > 0 ? <NftTable nfts={nfts} getCurrencyCookie={getCurrencyCookie}/> : ""}
 
             {isConnected ? <div className="table-responsive">
                 <Table responsive borderless hover variant="dark" id="fetch-buttons" size="sm">
@@ -113,7 +111,13 @@ function App() {
                 </Table>
             </div>
             : ""}
+
+            {tokens.data !== undefined ? <TokenTable tokens={tokens} getCurrencyCookie={getCurrencyCookie} ownerAddress={ownerAddress}/> : ""}
+            {nfts.length > 0 ? <NftTable nfts={nfts} getCurrencyCookie={getCurrencyCookie}/> : ""}
+
         </div>
+
+
 
     );
 }

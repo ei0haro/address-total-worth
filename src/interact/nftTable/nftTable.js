@@ -57,7 +57,7 @@ function NftTable({nfts, getCurrencyCookie}) {
                             <tr key={index}>
                                 <td><Image width={50} height={50} className='img-fluid shadow-4' alt='...' src={routeIpfsToGateway(item.image)} /></td>
                             <td className="font-table">{`${item.name}`}</td>
-                            <td className="font-table">{fixAmount(item.floorPrice, 5)}</td>
+                            <td className="font-table">{fixAmount(item.floorPrice, 5)} ETH</td>
                             <td className="font-table">{`${item.nrOfNfts}`}</td>
                             <td className="font-table">{fixAmount(item.totalInFiat[getCurrencyCookie()], 2)} {getCurrencyCookie()}</td>
 
