@@ -15,7 +15,7 @@ function TotalTable({nfts, tokens, getCurrencyCookie, handleCloseTokenButton, ha
 
     function getClearButton(index, closeButtonHandle) {
         if(index === 0){
-            return <CloseButton onClick={closeButtonHandle} />
+            return <CloseButton variant="white" onClick={closeButtonHandle} />
         }
     }
 
@@ -45,9 +45,10 @@ function TotalTable({nfts, tokens, getCurrencyCookie, handleCloseTokenButton, ha
         return (
 
             <div>
+                <td></td>
                 <div className="table-responsive">
                     <Table responsive borderless hover variant="dark" id="crypto-table" size="sm">
-                        <td></td>
+
                         <thead>
                         <tr>
                             <th className="font-table">Image</th>
@@ -70,7 +71,8 @@ function TotalTable({nfts, tokens, getCurrencyCookie, handleCloseTokenButton, ha
                                 <td className="font-table">{getClearButton(index, handleCloseTokenButton)}</td>
                             </tr>
                         )) : ""}
-                        <td></td>
+
+                        { tokens.length > 0 ? <td></td> : "" }
                         { nfts.length > 0 ? nfts.map((item, index) => (
 
                             <tr key={index}>
@@ -83,7 +85,7 @@ function TotalTable({nfts, tokens, getCurrencyCookie, handleCloseTokenButton, ha
                             </tr>
                         )) : ""}
                         </tbody>
-                        <td></td>
+                        { nfts.length > 0 ? <td></td> : "" }
                         <tfoot >
                         <tr key={nfts.size + 1} >
                             <td></td>
