@@ -83,6 +83,8 @@ function App() {
                 window.ethereum.on("accountsChanged", (accounts) => {
                     if (accounts.length > 0) {
                         setOwnerAddress(accounts[0]);
+                        setNfts([]);
+                        setTokens([]);
                     }
                 });
             }
