@@ -41,7 +41,7 @@ function NavBar({walletAddress, handleConnectWallet, isConnected, setCurrencyCoo
                         </Nav>
                         : ""
                     }
-                    <DarkButton size={'sm'} onClickFunction={handleConnectWallet} disableIf={false}
+                    <DarkButton size={'lg'} onClickFunction={handleConnectWallet} disableIf={false}
                                 text={setConnectButtonText(walletAddress)}></DarkButton>
 
 

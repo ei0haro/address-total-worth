@@ -10,6 +10,7 @@ import DarkButton from "./interact/button/button";
 import Cookies from 'universal-cookie';
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
+import DonateCard from "./DonateCard";
 
 function App() {
     const [isLoading, setIsLoading] = useState(false);
@@ -95,15 +96,17 @@ function App() {
 
     return (
         <div className="App">
+
+
             <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet} isConnected={isConnected}
                     setCurrencyCookie={setCurrencyCookie} getCurrencyCookie={getCurrencyCookie}></NavBar>
 
             {isConnected ? <Navbar bg="dark" variant="dark">
                     <Container>
 
-                        <DarkButton size={'sm'} onClickFunction={handleFetchNfts} disableIf={isLoading || !isConnected}
+                        <DarkButton size={'lg'} onClickFunction={handleFetchNfts} disableIf={isLoading || !isConnected}
                                     text={isLoading ? 'Loading…' : 'Fetch NFTs'}></DarkButton>
-                        <DarkButton size={'sm'} onClickFunction={handleFetchTokens} disableIf={isLoading || !isConnected}
+                        <DarkButton size={'lg'} onClickFunction={handleFetchTokens} disableIf={isLoading || !isConnected}
                                     text={isLoading ? 'Loading…' : 'Fetch Tokens'}></DarkButton>
 
                     </Container>
@@ -114,6 +117,17 @@ function App() {
                 <TotalTable nfts={nfts} tokens={tokens} getCurrencyCookie={getCurrencyCookie}
                             handleCloseTokenButton={handleCloseTokenButton}
                             handleCloseNftsButton={handleCloseNftsButton} hand/> : ""}
+
+
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <div>
+                <p>Donate: </p>
+                <DonateCard></DonateCard>
+            </div>
 
         </div>
 
