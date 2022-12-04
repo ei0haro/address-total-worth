@@ -1,5 +1,6 @@
 import {TokenBalanceType} from "alchemy-sdk";
 import {fiatCurrencies} from "../FiatCurrencies";
+
 const {Network, Alchemy} = require('alchemy-sdk');
 const {ethers} = require("ethers");
 const ethereumLogo = require('./../../images/ethereum.png');
@@ -10,8 +11,8 @@ const settings = {
     network: Network.ETH_MAINNET,
 };
 
-export const fetchNFTs = async (ownerAddr) => {
-    if(ownerAddr === "" || ownerAddr === undefined){
+export const fetchNFTs = async (ownerAddr, savedEthPrice) => {
+    if (ownerAddr === "" || ownerAddr === undefined) {
         console.log("Address was not set")
         return []
     }
@@ -20,7 +21,7 @@ export const fetchNFTs = async (ownerAddr) => {
     const distinctNfts = [];
     const map = new Map();
     for (const nft of nftsForOwner.ownedNfts) {
-        if(!map.has(nft.contract.address)){
+        if (!map.has(nft.contract.address)) {
             map.set(nft.contract.address, true);
             distinctNfts.push({
                 contractAddress: nft.contract.address,
@@ -28,9 +29,8 @@ export const fetchNFTs = async (ownerAddr) => {
                 image: nft.rawMetadata.image,
                 nrOfNfts: 1
             })
-        }
-        else{
-            distinctNfts.forEach(function(distinctNft) {
+        } else {
+            distinctNfts.forEach(function (distinctNft) {
                 if (distinctNft.contractAddress === nft.contract.address) {
                     distinctNft.nrOfNfts = distinctNft.nrOfNfts + 1;
                 }
@@ -38,14 +38,9 @@ export const fetchNFTs = async (ownerAddr) => {
         }
     }
 
-    if(nftsForOwner.ownedNfts.length > 0) {
+    if (nftsForOwner.ownedNfts.length > 0) {
 
-        let CoinGeckoClient = new CoinGecko()
-
-        let ethPrice = await CoinGeckoClient.simple.price({
-            ids: ['ethereum'],
-            vs_currencies: fiatCurrencies,
-        });
+        let ethPrice = await fetchPriceOfEthereum(savedEthPrice)
 
         for (const nft of distinctNfts) {
 
@@ -75,24 +70,47 @@ async function fetchNftFiatBalance(ethPrice, floorPriceInEth, numberOfNfts) {
 
     let fiatCurrencyBalance = {};
     fiatCurrencies.forEach(function (c) {
-        if(floorPriceInEth !== undefined)
+        if (floorPriceInEth !== undefined)
             fiatCurrencyBalance[c] = (ethPrice.data['ethereum'][c.toLowerCase()] * floorPriceInEth) * numberOfNfts
     });
 
     return fiatCurrencyBalance
 }
 
-async function fetchEthereumBalance(CoinGeckoClient, alchemy, ownerAddr) {
+function addMinutesToDate(date, minutes) {
+    return new Date(date.getTime() + minutes * 60000);
+}
 
-    let ethBalanceInWei = await alchemy.core.getBalance(ownerAddr)
-    if(ethBalanceInWei._hex === "0x00") {
-        return []
+async function fetchPriceOfEthereum(savedEthPrice) {
+
+    if (savedEthPrice !== undefined) {
+
+        if (savedEthPrice.whenCacheTimeOut >= new Date()) {
+            let ethPrice = {data: []}
+            ethPrice.data['ethereum'] = savedEthPrice.tokenPrice
+            ethPrice.whenCacheTimeOut = savedEthPrice.whenCacheTimeOut
+            return ethPrice
+        }
     }
+    let CoinGeckoClient = new CoinGecko()
 
     let ethPrice = await CoinGeckoClient.simple.price({
         ids: ['ethereum'],
         vs_currencies: fiatCurrencies,
     });
+
+    ethPrice.whenCacheTimeOut = addMinutesToDate(new Date(), 10);
+    return ethPrice
+}
+
+async function fetchEthereumBalance(CoinGeckoClient, alchemy, ownerAddr, savedEthPrice) {
+
+    let ethBalanceInWei = await alchemy.core.getBalance(ownerAddr)
+    if (ethBalanceInWei._hex === "0x00") {
+        return []
+    }
+
+    let ethPrice = await fetchPriceOfEthereum(savedEthPrice)
 
     let result = []
     let ethBalanceInEth = parseFloat((ethers.utils.formatEther(ethBalanceInWei))).toFixed(5)
@@ -110,27 +128,27 @@ async function fetchEthereumBalance(CoinGeckoClient, alchemy, ownerAddr) {
         symbol: "ETH",
         decimals: 18,
         balanceFiat: fiatCurrencyBalance,
-        tokenPrice: ethPrice.data['ethereum']
+        tokenPrice: ethPrice.data['ethereum'],
+        whenCacheTimeOut: ethPrice.whenCacheTimeOut
     }
 
     result.push(ethData);
-    //console.log(result)
     return result;
 }
 
-export const fetchTokens = async (ownerAddr) => {
+export const fetchTokens = async (ownerAddr, savedEthPrice) => {
 
     const alchemy = new Alchemy(settings);
     let CoinGeckoClient = new CoinGecko()
 
-    let result = await fetchEthereumBalance(CoinGeckoClient, alchemy, ownerAddr);
+    let result = await fetchEthereumBalance(CoinGeckoClient, alchemy, ownerAddr, savedEthPrice);
 
     let tokensInAddress = await alchemy.core.getTokenBalances(ownerAddr, {type: TokenBalanceType.DEFAULT_TOKENS});
     let tokensWithBalance = tokensInAddress.tokenBalances.filter(function (token) {
         return token.tokenBalance !== "0x0000000000000000000000000000000000000000000000000000000000000000";
     });
 
-    if(tokensWithBalance.length > 0 ) {
+    if (tokensWithBalance.length > 0) {
 
         let contractAddresses = tokensWithBalance.map(a => a.contractAddress);
 
@@ -167,7 +185,7 @@ export const fetchTokens = async (ownerAddr) => {
     fiatCurrencies.forEach(function (c) {
         let total = 0.0;
         result.forEach(function (token) {
-           total += parseFloat(token.balanceFiat[c])
+            total += parseFloat(token.balanceFiat[c])
         });
 
         totalInFiat[c] = total

@@ -19,18 +19,19 @@ function App() {
     const [tokens, setTokens] = useState([]);
     const [ownerAddress, setOwnerAddress] = useState('');
     const [errorMessage, setErrorMessage] = useState("");
+    const [savedEthPrice, setSavedEthPrice] = useState({});
     const [selectedCurrency, setSelectedCurrency] = useState();
 
     const handleFetchAll = () => {
         setTokens([])
         setNfts([])
-        handleFetchNfts()
         handleFetchTokens()
+        handleFetchNfts()
     };
 
     const handleFetchNfts = (localOwnerAddress = ownerAddress) => {
         setIsLoading(true);
-        fetchNFTs(localOwnerAddress)
+        fetchNFTs(localOwnerAddress, savedEthPrice)
             .then((response) => {
                 setNfts(response)
                 setIsLoading(false)
@@ -43,9 +44,13 @@ function App() {
 
     const handleFetchTokens = (localOwnerAddress = ownerAddress) => {
         setIsLoading(true);
-        fetchTokens(localOwnerAddress)
+        fetchTokens(localOwnerAddress, savedEthPrice)
             .then((response) => {
                 setTokens(response)
+                setSavedEthPrice({
+                    tokenPrice: response[0].tokenPrice,
+                    whenCacheTimeOut: response[0].whenCacheTimeOut
+                })
                 setIsLoading(false)
             })
             .catch(() => {
@@ -80,11 +85,11 @@ function App() {
                 setIsLoading(false)
                 setIsConnected(true)
 
-                if(nfts.length == 0) {
-                    handleFetchNfts()
+                if(tokens.length === 0){
+                    handleFetchTokens(response)
                 }
-                if(tokens.length == 0){
-                    handleFetchTokens()
+                if(nfts.length === 0) {
+                    handleFetchNfts(response)
                 }
 
             })
