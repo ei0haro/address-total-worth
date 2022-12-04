@@ -21,6 +21,13 @@ function App() {
     const [errorMessage, setErrorMessage] = useState("");
     const [selectedCurrency, setSelectedCurrency] = useState();
 
+    const handleFetchAll = () => {
+        setTokens([])
+        setNfts([])
+        handleFetchNfts()
+        handleFetchTokens()
+    };
+
     const handleFetchNfts = () => {
         setIsLoading(true);
         fetchNFTs(ownerAddress)
@@ -72,6 +79,14 @@ function App() {
                 setOwnerAddress(response)
                 setIsLoading(false)
                 setIsConnected(true)
+
+                if(nfts.length == 0) {
+                    handleFetchNfts()
+                }
+                if(tokens.length == 0){
+                    handleFetchTokens()
+                }
+
             })
             .catch(() => {
                 setErrorMessage("Unable to connect to wallet");
@@ -101,13 +116,11 @@ function App() {
             <NavBar walletAddress={ownerAddress} handleConnectWallet={handleConnectWallet} isConnected={isConnected}
                     setCurrencyCookie={setCurrencyCookie} getCurrencyCookie={getCurrencyCookie}></NavBar>
 
-            {isConnected ? <Navbar bg="dark" variant="dark">
-                    <Container>
+            {isConnected ? <Navbar bg="dark" variant="dark" >
+                    <Container className="justify-content-center">
 
-                        <DarkButton size={'lg'} onClickFunction={handleFetchNfts} disableIf={isLoading || !isConnected}
-                                    text={isLoading ? 'Loading…' : 'Fetch NFTs'}></DarkButton>
-                        <DarkButton size={'lg'} onClickFunction={handleFetchTokens} disableIf={isLoading || !isConnected}
-                                    text={isLoading ? 'Loading…' : 'Fetch Tokens'}></DarkButton>
+                        <DarkButton size={'lg'} onClickFunction={handleFetchAll} disableIf={isLoading || !isConnected}
+                                    text={isLoading ? 'Loading…' : 'Refresh'}></DarkButton>
 
                     </Container>
                 </Navbar>

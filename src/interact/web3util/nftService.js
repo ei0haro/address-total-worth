@@ -34,33 +34,35 @@ export const fetchNFTs = async (ownerAddr) => {
         }
     }
 
-    let CoinGeckoClient = new CoinGecko()
+    if(nftsForOwner.ownedNfts.length > 0) {
 
-    let ethPrice = await CoinGeckoClient.simple.price({
-        ids: ['ethereum'],
-        vs_currencies: fiatCurrencies,
-    });
+        let CoinGeckoClient = new CoinGecko()
 
-    for (const nft of distinctNfts){
-
-        let floorPrice = await alchemy.nft.getFloorPrice(nft.contractAddress)
-
-        nft.floorPrice = floorPrice.openSea.floorPrice
-        nft.totalInFiat = await fetchNftFiatBalance(ethPrice, floorPrice.openSea.floorPrice, nft.nrOfNfts)
-    }
-
-    let totalInFiat = {}
-    fiatCurrencies.forEach(function (c) {
-        let total = 0.0;
-        distinctNfts.forEach(function (nft) {
-            if(nft.totalInFiat[c] !== undefined)
-                total += nft.totalInFiat[c]
+        let ethPrice = await CoinGeckoClient.simple.price({
+            ids: ['ethereum'],
+            vs_currencies: fiatCurrencies,
         });
 
-        totalInFiat[c] = total
-    });
-    distinctNfts.totalInFiat = totalInFiat
+        for (const nft of distinctNfts) {
 
+            let floorPrice = await alchemy.nft.getFloorPrice(nft.contractAddress)
+
+            nft.floorPrice = floorPrice.openSea.floorPrice
+            nft.totalInFiat = await fetchNftFiatBalance(ethPrice, floorPrice.openSea.floorPrice, nft.nrOfNfts)
+        }
+
+        let totalInFiat = {}
+        fiatCurrencies.forEach(function (c) {
+            let total = 0.0;
+            distinctNfts.forEach(function (nft) {
+                if (nft.totalInFiat[c] !== undefined)
+                    total += nft.totalInFiat[c]
+            });
+
+            totalInFiat[c] = total
+        });
+        distinctNfts.totalInFiat = totalInFiat
+    }
     return distinctNfts
 
 };
@@ -77,12 +79,16 @@ async function fetchNftFiatBalance(ethPrice, floorPriceInEth, numberOfNfts) {
 }
 
 async function fetchEthereumBalance(CoinGeckoClient, alchemy, ownerAddr) {
+
+    let ethBalanceInWei = await alchemy.core.getBalance(ownerAddr)
+    if(ethBalanceInWei._hex === "0x00") {
+        return []
+    }
+
     let ethPrice = await CoinGeckoClient.simple.price({
         ids: ['ethereum'],
         vs_currencies: fiatCurrencies,
     });
-
-    let ethBalanceInWei = await alchemy.core.getBalance(ownerAddr)
 
     let result = []
     let ethBalanceInEth = parseFloat((ethers.utils.formatEther(ethBalanceInWei))).toFixed(5)
@@ -104,7 +110,7 @@ async function fetchEthereumBalance(CoinGeckoClient, alchemy, ownerAddr) {
     }
 
     result.push(ethData);
-    console.log(result)
+    //console.log(result)
     return result;
 }
 
@@ -115,43 +121,42 @@ export const fetchTokens = async (ownerAddr) => {
 
     let result = await fetchEthereumBalance(CoinGeckoClient, alchemy, ownerAddr);
 
-
-
     let tokensInAddress = await alchemy.core.getTokenBalances(ownerAddr, {type: TokenBalanceType.DEFAULT_TOKENS});
     let tokensWithBalance = tokensInAddress.tokenBalances.filter(function (token) {
         return token.tokenBalance !== "0x0000000000000000000000000000000000000000000000000000000000000000";
     });
 
+    if(tokensWithBalance.length > 0 ) {
 
+        let contractAddresses = tokensWithBalance.map(a => a.contractAddress);
 
-    let contractAddresses = tokensWithBalance.map(a => a.contractAddress);
-
-    let tokenPrices = await CoinGeckoClient.simple.fetchTokenPrice({
-        contract_addresses: contractAddresses,
-        vs_currencies: fiatCurrencies,
-    });
-
-    for (const token of tokensWithBalance) {
-
-        const metadata = await alchemy.core.getTokenMetadata(token.contractAddress)
-        const tokenBalance = parseFloat((token.tokenBalance / Math.pow(10, metadata.decimals)).toFixed(5))
-
-        let fiatCurrencyBalance = {};
-        fiatCurrencies.forEach(function(c) {
-            fiatCurrencyBalance[c] = (tokenPrices.data[token.contractAddress][c.toLowerCase()] * tokenBalance).toFixed(2)
+        let tokenPrices = await CoinGeckoClient.simple.fetchTokenPrice({
+            contract_addresses: contractAddresses,
+            vs_currencies: fiatCurrencies,
         });
 
-        let tokenData = {
-            contractAddress: token.contractAddress,
-            balance: tokenBalance,
-            name: metadata.name,
-            logo: metadata.logo,
-            symbol: metadata.symbol,
-            decimals: metadata.decimals,
-            balanceFiat: fiatCurrencyBalance,
-            tokenPrice: tokenPrices.data[token.contractAddress]
+        for (const token of tokensWithBalance) {
+
+            const metadata = await alchemy.core.getTokenMetadata(token.contractAddress)
+            const tokenBalance = parseFloat((token.tokenBalance / Math.pow(10, metadata.decimals)).toFixed(5))
+
+            let fiatCurrencyBalance = {};
+            fiatCurrencies.forEach(function (c) {
+                fiatCurrencyBalance[c] = (tokenPrices.data[token.contractAddress][c.toLowerCase()] * tokenBalance).toFixed(2)
+            });
+
+            let tokenData = {
+                contractAddress: token.contractAddress,
+                balance: tokenBalance,
+                name: metadata.name,
+                logo: metadata.logo,
+                symbol: metadata.symbol,
+                decimals: metadata.decimals,
+                balanceFiat: fiatCurrencyBalance,
+                tokenPrice: tokenPrices.data[token.contractAddress]
+            }
+            result.push(tokenData);
         }
-        result.push(tokenData);
     }
 
     let totalInFiat = {}

@@ -27,6 +27,7 @@ function NavBar({walletAddress, handleConnectWallet, isConnected, setCurrencyCoo
                         Check your address total worth...
                     </Navbar.Brand>
                     {isConnected ? <Nav>
+                        <Container className="justify-content-center">
                             <NavDropdown
                                 id="nav-dropdown-dark-example"
                                 title={getCurrencyCookie()}
@@ -38,6 +39,7 @@ function NavBar({walletAddress, handleConnectWallet, isConnected, setCurrencyCoo
                                 ))}
 
                             </NavDropdown>
+                        </Container>
                         </Nav>
                         : ""
                     }
