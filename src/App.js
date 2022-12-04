@@ -28,9 +28,9 @@ function App() {
         handleFetchTokens()
     };
 
-    const handleFetchNfts = () => {
+    const handleFetchNfts = (localOwnerAddress = ownerAddress) => {
         setIsLoading(true);
-        fetchNFTs(ownerAddress)
+        fetchNFTs(localOwnerAddress)
             .then((response) => {
                 setNfts(response)
                 setIsLoading(false)
@@ -41,9 +41,9 @@ function App() {
             });
     };
 
-    const handleFetchTokens = () => {
+    const handleFetchTokens = (localOwnerAddress = ownerAddress) => {
         setIsLoading(true);
-        fetchTokens(ownerAddress)
+        fetchTokens(localOwnerAddress)
             .then((response) => {
                 setTokens(response)
                 setIsLoading(false)
@@ -101,6 +101,9 @@ function App() {
                         setOwnerAddress(accounts[0]);
                         setNfts([]);
                         setTokens([]);
+
+                        handleFetchTokens(accounts[0])
+                        handleFetchNfts(accounts[0])
                     }
                 });
             }

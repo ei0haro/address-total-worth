@@ -11,6 +11,10 @@ const settings = {
 };
 
 export const fetchNFTs = async (ownerAddr) => {
+    if(ownerAddr === "" || ownerAddr === undefined){
+        console.log("Address was not set")
+        return []
+    }
     const alchemy = new Alchemy(settings);
     const nftsForOwner = await alchemy.nft.getNftsForOwner(ownerAddr);
     const distinctNfts = [];
