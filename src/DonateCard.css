@@ -1,0 +1,22 @@
+.donate-modal .modal-content {
+    background-color: black;
+}
+
+
+
+.form-control:not(active){
+
+    color: white;
+}
+
+.form-control:focus{
+    color: white;
+    background-color: #212529;
+}
+
+.form-control {
+
+    border-radius: 0;
+    background-color: #212529;
+
+}

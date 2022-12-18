@@ -21,6 +21,7 @@ function App() {
     const [errorMessage, setErrorMessage] = useState("");
     const [savedEthPrice, setSavedEthPrice] = useState({});
     const [selectedCurrency, setSelectedCurrency] = useState();
+    const [modalShow, setModalShow] = useState(false);
 
     const handleFetchAll = () => {
         setTokens([])
@@ -115,7 +116,7 @@ function App() {
         }
 
         fetchChangedAddress().then()
-    }, []);
+    });
 
     return (
         <div className="App">
@@ -146,8 +147,7 @@ function App() {
             <td></td>
             <td></td>
             <div>
-                <p>Donate: </p>
-                <DonateCard></DonateCard>
+                <DonateCard modalShow={modalShow} setModalShow={setModalShow}></DonateCard>
             </div>
 
         </div>
